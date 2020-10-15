@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 
 namespace WpfApp1
 {
+	//Нужно придумать нормальное название
 	public class MyRadioBtn : RadioButton
 	{
 		public int InfoAboutGameRows { get; set; }
@@ -26,25 +27,50 @@ namespace WpfApp1
 	{
 		Button[] bts;
 		ArrayList userChoises = new ArrayList();
-		//int[] randomIndexes = new int[3];
+		int[] randomIndexes;
 
 		public MainWindow()
 		{
 			InitializeComponent();
 		}
 
+		//============== Обработчики событий =================
 		private void RadioBtn_Checked(object sender, RoutedEventArgs e)
 		{
 			MyRadioBtn localRadioBtn = (MyRadioBtn)sender;
 			CreateNewGameField(localRadioBtn.InfoAboutGameRows, localRadioBtn.InfoAboutGameColumns);
 		}
-		public void CreateNewGameField(int rows = 3, int columns = 3)
+		private void ButtonClick(object sender, RoutedEventArgs e)//Нужно засунуть логику определения победы/поражения в отдельный метод
+		{
+			
+			if (userChoises.Count != randomIndexes.Length) userChoises.Add((Button)sender);
+			else
+			{
+				String str = "Победа!";
+				for (int i = 0; i < randomIndexes.Length; i++)
+					if (userChoises[i] != bts[randomIndexes[i]])
+					{
+						str = "Поражение!";
+						break;
+					}
+				MessageBox.Show(str);
+				userChoises.Clear();
+			}
+		}
+
+
+		//-------------- Методы создания игрового поля с кнопками ------
+		public void CreateNewGameField(int rows = 3, int columns = 3)//Здесь временно вызванный метод ген. случ. чисел
 		{
 			gameGrid.Children.Clear();
 			gameGrid.Rows = rows;
 			gameGrid.Columns = columns;
+
 			bts = CreateGameButtons(rows * columns);
-			AddButtonsToGameField(bts, gameGrid);
+			AddButtonsToGameField();
+
+			
+			GetRandomIndexes(3, gameGrid.Rows * gameGrid.Columns);
 		}
 		public Button[] CreateGameButtons(int count)
 		{
@@ -56,25 +82,25 @@ namespace WpfApp1
 			}
 			return bts;
 		}
-		public void AddButtonsToGameField(Button[] bts, UniformGrid ug)
+		public void AddButtonsToGameField()
 		{
-			for (int i = 0; i < ug.Rows * ug.Columns; i++) ug.Children.Add(bts[i]);
+			for (int i = 0; i < gameGrid.Rows * gameGrid.Columns; i++) gameGrid.Children.Add(bts[i]);
 		}
+		
 
-		private void ButtonClick(object sender, RoutedEventArgs e)
+
+
+
+
+		//+++++++++++ Нужно доработать систему появления рандомных ячеек для игрока
+		public void GetRandomIndexes(int countOfRandomIndexes, int maxNumber)
 		{
-			if (userChoises.Count != bts.Length) userChoises.Add((Button)sender);
-			else
+			Random rand = new Random();
+			randomIndexes = new int[countOfRandomIndexes];
+
+			for (int i = 0; i < countOfRandomIndexes; i++)
 			{
-				String str = "Ты победил!";
-				for (int i = 0; i < bts.Length; i++)
-					if (userChoises[i] != bts[i])
-					{
-						str = "Ты проиграл!";
-						break;
-					} 
-				MessageBox.Show(str);
-				userChoises.Clear();
+				randomIndexes[i] = rand.Next(0, maxNumber);
 			}
 		}
 	}
