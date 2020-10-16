@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,7 +41,7 @@ namespace WpfApp1
 			MyRadioBtn localRadioBtn = (MyRadioBtn)sender;
 			CreateNewGameField(localRadioBtn.InfoAboutGameRows, localRadioBtn.InfoAboutGameColumns);
 		}
-		private void ButtonClick(object sender, RoutedEventArgs e)//Нужно засунуть логику определения победы/поражения в отдельный метод
+		private void Button_Click(object sender, RoutedEventArgs e)//Нужно засунуть логику определения победы/поражения в отдельный метод
 		{
 			
 			if (userChoises.Count != randomIndexes.Length) userChoises.Add((Button)sender);
@@ -57,10 +58,13 @@ namespace WpfApp1
 				userChoises.Clear();
 			}
 		}
-
+		private void Start_Click(object sender, RoutedEventArgs e)
+		{
+			StartNewGame();
+		}
 
 		//-------------- Методы создания игрового поля с кнопками ------
-		public void CreateNewGameField(int rows = 3, int columns = 3)//Здесь временно вызванный метод ген. случ. чисел
+		public void CreateNewGameField(int rows = 3, int columns = 3)
 		{
 			gameGrid.Children.Clear();
 			gameGrid.Rows = rows;
@@ -68,9 +72,6 @@ namespace WpfApp1
 
 			bts = CreateGameButtons(rows * columns);
 			AddButtonsToGameField();
-
-			
-			GetRandomIndexes(3, gameGrid.Rows * gameGrid.Columns);
 		}
 		public Button[] CreateGameButtons(int count)
 		{
@@ -78,7 +79,8 @@ namespace WpfApp1
 			for (int i = 0; i < count; i++) 
 			{
 				bts[i] = new Button();
-				bts[i].Click += ButtonClick;
+				bts[i].Background = new SolidColorBrush(Colors.White);
+				bts[i].Click += Button_Click;
 			}
 			return bts;
 		}
@@ -93,7 +95,7 @@ namespace WpfApp1
 
 
 		//+++++++++++ Нужно доработать систему появления рандомных ячеек для игрока
-		public void GetRandomIndexes(int countOfRandomIndexes, int maxNumber)
+		public void CreateRandomIndexes(int countOfRandomIndexes, int maxNumber)
 		{
 			Random rand = new Random();
 			randomIndexes = new int[countOfRandomIndexes];
@@ -102,6 +104,25 @@ namespace WpfApp1
 			{
 				randomIndexes[i] = rand.Next(0, maxNumber);
 			}
+		}
+
+		async public void StartNewGame()//Здесь нужен рефакторинг!
+		{
+			foreach (FrameworkElement elem in generalGrid.Children) elem.IsEnabled = false;
+			gameGrid.IsEnabled = true;
+
+			CreateRandomIndexes(5, gameGrid.Rows * gameGrid.Columns);
+
+			for (int i = 0; i < randomIndexes.Length; i++)
+			{
+				bts[randomIndexes[i]].Background = new SolidColorBrush(Colors.Red);
+				await Task.Delay(1000);
+				bts[randomIndexes[i]].Background = new SolidColorBrush(Colors.White);
+				await Task.Delay(1000);
+			}
+
+			foreach (FrameworkElement elem in generalGrid.Children) elem.IsEnabled = true;
+			
 		}
 	}
 }
