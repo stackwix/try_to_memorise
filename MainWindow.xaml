@@ -19,7 +19,7 @@
 		</Grid.RowDefinitions>
 		
 		<!--Игровая зона-->
-        <UniformGrid x:Name="gameGrid" Grid.RowSpan="2" Margin="10" IsEnabled="False"/>
+        <UniformGrid x:Name="gameGrid" Grid.RowSpan="2" Margin="10"/>
 
         <!--Правое меню-->
 		<GroupBox Grid.Column="1" Header="Игровое поле" Margin="10" Padding="5">
@@ -32,9 +32,9 @@
 
         <!-- Нижнее меню -->
         <DockPanel Grid.Column="0" Grid.Row="3" LastChildFill="False">
-            <Button x:Name="start" DockPanel.Dock="Left" Margin="10" Padding="7" Width="200" Click="Start_Click">Начать игру</Button>
-            <Button x:Name="confirm" DockPanel.Dock="Left" Margin="10" Padding="7">Подтвердить выбор</Button>
-            <Button x:Name="cancel" DockPanel.Dock="Right" Margin="10" Padding="7">Отменить выбор</Button>
+            <Button x:Name="start" DockPanel.Dock="Left" Margin="10" Padding="7" Width="200" Click="Start_Click">Начать тренировку памяти</Button>
+            <Button x:Name="cancel" DockPanel.Dock="Right" Margin="10" Padding="7" IsEnabled="False" Click="Cancel_Click">Отменить выбор</Button>
+            <Button x:Name="confirm" DockPanel.Dock="Right" Margin="10" Padding="7" IsEnabled="False" Click="Confirm_Click">Подтвердить выбор</Button>
         </DockPanel>
 	</Grid>
 </Window>
